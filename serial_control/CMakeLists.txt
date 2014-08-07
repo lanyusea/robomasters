@@ -125,7 +125,7 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-add_executable(serial_control src/main.cpp)
+add_executable(serial_control src/serial.cpp)
 
 target_link_libraries(serial_control serial ${catkin_LIBRARIES})
 ## Add cmake target dependencies of the executable/library
