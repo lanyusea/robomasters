@@ -53,6 +53,8 @@ IplImage* EDImage = cvCreateImage(cvSize(T_IMAGE_WIDTH, T_IMAGE_HEIGHT), IPL_DEP
 IplImage* pImgTst = cvCreateImage(cvSize(T_IMAGE_WIDTH, T_IMAGE_HEIGHT), IPL_DEPTH_8U, 3);
 IplImage* pImgHsv = cvCreateImage(cvSize(T_IMAGE_WIDTH, T_IMAGE_HEIGHT), IPL_DEPTH_8U, 3);
 
+ros::Publisher pub1;
+
 struct SObstacle
 {
     CvPoint FrPt;

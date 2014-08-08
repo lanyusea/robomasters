@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 
     //serial_port init part
     //credit to Paul Yang and his team
-    serial_port.Open("/dev/ttyUSB");//TODO
+    serial_port.Open("/dev/ttyUSB0");//TODO
     if ( ! serial_port.good() )
     {
         std::cerr << "[" << __FILE__ << ":" << __LINE__ << "] "

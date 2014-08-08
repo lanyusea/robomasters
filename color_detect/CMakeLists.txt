@@ -98,6 +98,7 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+    ~/rospkg/ros_opentld/tld_msgs/msg_gen/cpp/include/tld_msgs/
   ${catkin_INCLUDE_DIRS}
 )
 

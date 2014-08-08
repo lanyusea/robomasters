@@ -1,5 +1,6 @@
 #include "color.h"
 #include <iostream>
+#include <BoundingBox.h>
 using namespace std;
 using namespace cv;
 
@@ -7,22 +8,36 @@ CvMat inImage;
 CvMat outImage;
 cv_bridge::CvImagePtr cv_ptr;
 IplImage* pLabelImg = NULL;
-	vector<SObstacle> vSObs, vRltObs, vTmpObs, vPreObs;
-	time_t c_start, c_end;
-	CvScalar sColour;
-	int nH, nS, nV, nStep;
-	unsigned char* DstData;
+vector<SObstacle> vSObs, vRltObs, vTmpObs, vPreObs;
+time_t c_start, c_end;
+CvScalar sColour;
+int nH, nS, nV, nStep;
+unsigned char* DstData;
+std_msgs::Header img_header;
 
-	long tPre = 0, tCur;
-	int nDeltaT;		
-	CvSeq *pcvSeq = NULL;
-	CvRect tRect;
-	SObstacle sTmpObs;
-	int nHangle = 0;
-	float fLW;
-	int nIndex = 0;
-	IplImage *pOutlineImage = cvCreateImage(cvGetSize(TmpImage), IPL_DEPTH_8U, 3);
-	CvMemStorage *pcvMStorage = cvCreateMemStorage();
+long tPre = 0, tCur;
+int nDeltaT;		
+CvSeq *pcvSeq = NULL;
+CvRect tRect;
+SObstacle sTmpObs;
+int nHangle = 0;
+float fLW;
+int nIndex = 0;
+IplImage *pOutlineImage = cvCreateImage(cvGetSize(TmpImage), IPL_DEPTH_8U, 3);
+CvMemStorage *pcvMStorage = cvCreateMemStorage();
+
+void msgPublish(int x, int y, int width, int height, float confidence) { //confidence is not used here
+	tld_msgs::BoundingBox msg;
+	msg.header = img_header; //Add the Header of the last image processed
+	msg.x = x;
+	msg.y = y;
+	msg.width = width;
+	msg.height = height;
+	msg.confidence = confidence;            
+	pub1.publish(msg);
+
+
+}
 bool IntsectRect(SObstacle sObs1, SObstacle sObs2)
 {
 	SObstacle TmpObs;
@@ -174,8 +189,10 @@ void MergeObs(vector<SObstacle> &vSrcObsList, vector<SObstacle>& vSRltObsList)
 
 
 void imageCallback(const sensor_msgs::ImageConstPtr& img) {
+	//credit to QI Xiaolin
 	cv_ptr = cv_bridge::toCvCopy(img, sensor_msgs::image_encodings::BGR8);
 	inImage = cv_ptr->image;
+	img_header = cv_ptr->header;
 	
 	//while(cv_ptr){
 		nIndex +=1;
@@ -308,13 +325,6 @@ int main(int argc, char ** argv)
 	ros::init(argc,argv,"color_detect");
 	ros::NodeHandle nh;
 
-	//credit to QI Xiaolin
-	//IplImage* pFrame0 = NULL;
-	
-
-	
-	
-
 	vTmpObs.clear();
 	vPreObs.clear();
 
@@ -324,6 +334,7 @@ int main(int argc, char ** argv)
 
     image_transport::ImageTransport it(nh);
     image_transport::Subscriber imgSub;
+	ros::Publisher pub1 = nh.advertise<tld_msgs::BoundingBox>("color_detect", 1000, true);
 	imgSub = it.subscribe("/gnd_cam/image0", 20, imageCallback);
 
 	ros::spin();
