@@ -114,7 +114,7 @@ int main(int argc, char** argv)
     ros::NodeHandle n;
     tld_msgs::BoundingBox newMsg;
 
-    ros::Subscriber sub = n.subscribe("/tld_tracked_object", 20, &callback);
+    ros::Subscriber sub = n.subscribe("/tld_tracked_object", 1000, &callback);//queue size TODO
 
     ros::spin();
 
