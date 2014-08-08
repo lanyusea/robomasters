@@ -71,7 +71,7 @@ float RectDist(SObstacle & sObs1, SObstacle sObs2)
 		sObs1.CnPt.y = (sObs1.NrPt.y + sObs1.FrPt.y) / 2;
 		sObs1.nWidth = sObs1.FrPt.x - sObs1.NrPt.x;
 		sObs1.nHeight = sObs1.FrPt.y - sObs1.NrPt.y;
-		sObs1.fHAngle = 37.5 * (2 * (float)sObs1.CnPt.x / T_IMAGE_WIDTH - 1);
+		sObs1.fHAngle = 35 * (2 * (float)sObs1.CnPt.x / T_IMAGE_WIDTH - 1);
 	}
 	
 	return fDis;
@@ -87,13 +87,13 @@ void Tracking(vector<SObstacle> vPreObs, vector<SObstacle> & vCurObs, int nDelta
 		{
 			TmpObs = vPreObs[nJ];
 			if (TmpObs.fVx > 0)
-				TmpObs.FrPt.x += TmpObs.fVx * nDeltaT;
+				TmpObs.FrPt.x += TmpObs.fVx * nDeltaT/1000;
 			else
-				TmpObs.NrPt.x += TmpObs.fVx * nDeltaT;
+				TmpObs.NrPt.x += TmpObs.fVx * nDeltaT/1000;
 			if (TmpObs.fVy > 0)
-				TmpObs.FrPt.y += TmpObs.fVy * nDeltaT;
+				TmpObs.FrPt.y += TmpObs.fVy * nDeltaT/1000;
 			else
-				TmpObs.NrPt.y += TmpObs.fVy * nDeltaT;
+				TmpObs.NrPt.y += TmpObs.fVy * nDeltaT/1000;
 			if (IntsectRect(vCurObs[nI], TmpObs))
 			{
 				//RltObs.nHeight = (nTolHeight - qObs.front().nHeight + vCurObs[nI].nHeight) / nQueueCount;
@@ -265,7 +265,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& img) {
 
 			if (vRltObs.size() > 0)
 			{
-				nHangle = (short int)(vRltObs[0].fHAngle * 100 + vRltObs[0].fVx * nDeltaT / 1000);
+				nHangle = (short int)(vRltObs[0].fHAngle * 100 + 7 * vRltObs[0].fVx * nDeltaT / T_IMAGE_WIDTH);
 //send serial				mPort.SendAngle(nHangle, 800);
 				//cout << nHangle << endl;
 			}
