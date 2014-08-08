@@ -7,9 +7,13 @@ using namespace LibSerial;
 using namespace std;
 
 SerialStream serial_port;
-const int BUF_LEN=44;  //TODO
-const int MSG_LEN=BUF_LEN/4;
-char msgArray[MSG_LEN];
+const int BUF_LEN=16;  //TODO
+//const int MSG_LEN=BUF_LEN/4;
+//char msgArray[MSG_LEN];
+int16_t msg;
+int8_t msgEnd;
+int8_t msgStart;
+//int msgArray[BUF_LEN];
 
 void callback(const tld_msgs::BoundingBox &data) {
     //receive msg test
@@ -28,13 +32,14 @@ void callback(const tld_msgs::BoundingBox &data) {
 
     //send the angle using serial port
 
+    msgStart = msg >> 8;
+    msgEnd = msg & 0xFF;
 
-    //serial_port<< "AA"
-    //    <<  <<
-    //    <<  <<
-    //    <<  <<
-    //    <<  <<
-    //    <<"BB";
+    serial_port<< "AA"
+        <<55
+        <<msgEnd
+        <<msgStart
+        <<"BB";
 
 }
 
