@@ -10,6 +10,7 @@ SerialStream serial_port;
 const int BUF_LEN=16;  //TODO
 //const int MSG_LEN=BUF_LEN/4;
 //char msgArray[MSG_LEN];
+float angle;
 int16_t msg;
 int8_t msgEnd;
 int8_t msgStart;
@@ -26,12 +27,12 @@ void callback(const tld_msgs::BoundingBox &data) {
 
     //calculate the angle
 
-
-
+    angle = 35 * ( 2 * (float)data.x / 640 -1);
 
 
     //send the angle using serial port
 
+    msg = (int16_t)(angle*100);
     msgStart = msg >> 8;
     msgEnd = msg & 0xFF;
 
