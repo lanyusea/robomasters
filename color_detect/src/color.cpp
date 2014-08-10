@@ -41,6 +41,8 @@ SerialStream serial_port;
 //}
 
 void serialInit() {
+    if (serial_port.IsOpen())
+        serial_port.Close();
     serial_port.Open("/dev/ttyUSB0");//TODO
     if ( ! serial_port.good() )
     {
@@ -101,19 +103,32 @@ void serialInit() {
 
 }
 
-void serialSend(int16_t yaw, int16_t pitch) {
-    int8_t yawStart = yaw >> 8;
-    int8_t yawEnd = yaw & 0xFF;
-    int8_t pitchStart = pitch >> 8;
-    int8_t pitchEnd = pitch & 0xFF;
 
-    serial_port<< "AA"
-        <<55
-        <<yawEnd
-        <<yawStart
-        <<pitchEnd
-        <<pitchStart
-        <<"BB";
+void serialSend(int16_t yaw, int16_t pitch) {
+    //cout << yaw << ",";
+    //cout << std::hex << yaw <<endl;
+    //cout << pitch <<",";
+    //cout << std::hex << pitch << endl;
+    uint16_t yawStart = yaw >> 8;
+    uint16_t yawEnd = yaw & 0xFF;
+    uint16_t pitchStart = pitch >> 8;
+    uint16_t pitchEnd = pitch & 0xFF;
+
+    serial_port << std::hex << 0xAA
+        << std::hex << 0x55
+        << std::hex <<yawEnd
+        << std::hex <<yawStart
+        << std::hex <<pitchEnd
+        << std::hex <<pitchStart
+        << std::hex <<0xBB;
+
+//    cout << std::hex << 0xAA
+//        << std::hex << 0x55
+//        << std::hex << yawEnd
+//        << std::hex << yawStart
+//        << std::hex << pitchEnd
+//        << std::hex << pitchStart
+//        << std::hex << 0xBB << endl;
 
 
 }
@@ -354,7 +369,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& img) {
             }
             for (unsigned int nI = 0; nI < vRltObs.size(); nI++)
             {
-                cout << vRltObs[nI].fVx << ", " << vRltObs[nI].fVy << endl;
+                //cout << vRltObs[nI].fVx << ", " << vRltObs[nI].fVy << endl;
                 cvRectangle(RgbImage, vRltObs[nI].FrPt, vRltObs[nI].NrPt, cvScalar(0, 0, 255));
             }
         }
