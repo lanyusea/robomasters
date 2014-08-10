@@ -1,6 +1,6 @@
 #include "color.h"
 #include <iostream>
-#include <BoundingBox.h>
+//#include <BoundingBox.h>
 using namespace std;
 using namespace cv;
 using namespace LibSerial;
@@ -53,7 +53,7 @@ void serialInit() {
     }
 
     // Set the baud rate of the serial port.
-    serial_port.SetBaudRate( SerialStreamBuf::BAUD_115200 ) ;
+    serial_port.SetBaudRate( SerialStreamBuf::BAUD_19200) ;
     if ( ! serial_port.good() )
     {
         std::cerr << "Error: Could not set the baud rate." <<
@@ -410,7 +410,7 @@ int main(int argc, char ** argv)
 
     image_transport::ImageTransport it(nh);
     image_transport::Subscriber imgSub;
-    ros::Publisher pub1 = nh.advertise<tld_msgs::BoundingBox>("color_detect", 1000, true);
+    //ros::Publisher pub1 = nh.advertise<tld_msgs::BoundingBox>("color_detect", 1000, true);
     imgSub = it.subscribe("/gnd_cam/image0", 20, imageCallback);
 
     ros::spin();
