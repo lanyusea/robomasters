@@ -129,7 +129,7 @@ include_directories(
 ## Declare a cpp executable
 add_executable(serial_control src/serial.cpp)
 
-target_link_libraries(serial_control serial ${catkin_LIBRARIES} ${OpenCV_LIBS})
+target_link_libraries(serial_control   ${SERIAL_LIBRARIES} ${catkin_LIBRARIES} ${OpenCV_LIBS})
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(serial_control_node serial_control_generate_messages_cpp)
