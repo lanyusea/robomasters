@@ -3,6 +3,7 @@
 #include <BoundingBox.h>
 using namespace std;
 using namespace cv;
+using namespace LibSerial;
 
 CvMat inImage;
 CvMat outImage;
@@ -27,6 +28,7 @@ IplImage *pOutlineImage = cvCreateImage(cvGetSize(TmpImage), IPL_DEPTH_8U, 3);
 CvMemStorage *pcvMStorage = cvCreateMemStorage();
 ros::Publisher pub1;
 
+SerialStream serial_port;
 //void msgPublish(int x, int y, int width, int height, float confidence) { //confidence is not used here
 //    tld_msgs::BoundingBox msg;
 //    msg.header = img_header; //Add the Header of the last image processed
@@ -38,6 +40,83 @@ ros::Publisher pub1;
 //    pub1.publish(msg);
 //}
 
+void serialInit() {
+    serial_port.Open("/dev/ttyUSB0");//TODO
+    if ( ! serial_port.good() )
+    {
+        std::cerr << "[" << __FILE__ << ":" << __LINE__ << "] "
+            << "Error: Could not open serial port."
+            << std::endl ;
+        exit(1) ;
+    }
+
+    // Set the baud rate of the serial port.
+    serial_port.SetBaudRate( SerialStreamBuf::BAUD_115200 ) ;
+    if ( ! serial_port.good() )
+    {
+        std::cerr << "Error: Could not set the baud rate." <<
+            std::endl ;
+        exit(1) ;
+    }
+    //
+    // Set the number of data bits.
+    //
+    serial_port.SetCharSize( SerialStreamBuf::CHAR_SIZE_8 ) ;
+    if ( ! serial_port.good() )
+    {
+        std::cerr << "Error: Could not set the character size." <<
+            std::endl ;
+        exit(1) ;
+    }
+    //
+    // Disable parity.
+    //
+    serial_port.SetParity( SerialStreamBuf::PARITY_NONE ) ;
+    if ( ! serial_port.good() )
+    {
+        std::cerr << "Error: Could not disable the parity." <<
+            std::endl ;
+        exit(1) ;
+    }
+    //
+    // Set the number of stop bits.
+    //
+    serial_port.SetNumOfStopBits( 1 ) ;
+    if ( ! serial_port.good() )
+    {
+        std::cerr << "Error: Could not set the number of stop bits."
+            << std::endl ;
+        exit(1) ;
+    }
+    //
+    // Turn off hardware flow control.
+    //
+    serial_port.SetFlowControl( SerialStreamBuf::FLOW_CONTROL_NONE ) ;
+    if ( ! serial_port.good() )
+    {
+        std::cerr << "Error: Could not use hardware flow control."
+            << std::endl ;
+        exit(1) ;
+    }
+
+}
+
+void serialSend(int16_t yaw, int16_t pitch) {
+    int8_t yawStart = yaw >> 8;
+    int8_t yawEnd = yaw & 0xFF;
+    int8_t pitchStart = pitch >> 8;
+    int8_t pitchEnd = pitch & 0xFF;
+
+    serial_port<< "AA"
+        <<55
+        <<yawEnd
+        <<yawStart
+        <<pitchEnd
+        <<pitchStart
+        <<"BB";
+
+
+}
 float RectDist(SObstacle & sObs1, SObstacle sObs2)
 {
     float fDis,dX,dY;
@@ -263,8 +342,22 @@ void imageCallback(const sensor_msgs::ImageConstPtr& img) {
             }
             Tracking(vPreObs, vRltObs, nDeltaT);
             //msgPublish(vRltObs.CnPt.x,vRltObs.CnPt.y,vRltObs.nWidth,vRltObs.nHeight);
-        }
+            if (vRltObs.size() > 0)
+            {
+                nHangle = (short int)(vRltObs[0].fHAngle * 100 + vRltObs[0].fVx * nDeltaT / 1000);
 
+                serialSend((int16_t)nHangle,(int16_t)800);
+            }
+            else
+            {
+                serialSend((int16_t)20000,(int16_t)20000);
+            }
+            for (unsigned int nI = 0; nI < vRltObs.size(); nI++)
+            {
+                cout << vRltObs[nI].fVx << ", " << vRltObs[nI].fVy << endl;
+                cvRectangle(RgbImage, vRltObs[nI].FrPt, vRltObs[nI].NrPt, cvScalar(0, 0, 255));
+            }
+        }
         vPreObs.clear();
         vPreObs = vRltObs;
 
@@ -290,6 +383,8 @@ int main(int argc, char ** argv)
 {
     ros::init(argc,argv,"color_detect");
     ros::NodeHandle nh;
+
+    serialInit();
 
     vTmpObs.clear();
     vPreObs.clear();
