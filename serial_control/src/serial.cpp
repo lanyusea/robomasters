@@ -1,8 +1,9 @@
 #include <ros/ros.h>
 #include <SerialStream.h>
-#include <tld_msgs/BoundingBox.h>
+//#include <tld_msgs/BoundingBox.h>
 #include <BoundingBox.h>
 #include <iostream>
+#include <color.h>
 using namespace LibSerial;
 using namespace std;
 
@@ -15,6 +16,8 @@ int16_t msg;
 int8_t msgEnd;
 int8_t msgStart;
 //int msgArray[BUF_LEN];
+
+
 
 void callback(const tld_msgs::BoundingBox &data) {
     //receive msg test
@@ -41,6 +44,11 @@ void callback(const tld_msgs::BoundingBox &data) {
         <<msgEnd
         <<msgStart
         <<"BB";
+
+
+    //call tracking
+
+
 
 }
 

@@ -53,7 +53,6 @@ IplImage* EDImage = cvCreateImage(cvSize(T_IMAGE_WIDTH, T_IMAGE_HEIGHT), IPL_DEP
 IplImage* pImgTst = cvCreateImage(cvSize(T_IMAGE_WIDTH, T_IMAGE_HEIGHT), IPL_DEPTH_8U, 3);
 IplImage* pImgHsv = cvCreateImage(cvSize(T_IMAGE_WIDTH, T_IMAGE_HEIGHT), IPL_DEPTH_8U, 3);
 
-ros::Publisher pub1;
 
 struct SObstacle
 {
@@ -69,3 +68,14 @@ struct SObstacle
     float fVy;
 };
 
+bool IntsectRect(SObstacle sObs1, SObstacle sObs2)
+{
+    SObstacle TmpObs;
+    TmpObs = sObs2;
+    if ((sObs1.FrPt.y >= sObs2.NrPt.y && sObs2.FrPt.y >= sObs1.NrPt.y) && (sObs1.FrPt.x >= sObs2.NrPt.x && sObs2.FrPt.x >= sObs1.NrPt.x))
+    {
+        return true;
+    }
+    else
+        return false;
+}

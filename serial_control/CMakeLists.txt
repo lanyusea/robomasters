@@ -8,6 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  cv_bridge
 )
 FIND_PATH(SERIAL_INCLUDE_DIR SerialStream.h
    /usr/include
@@ -116,6 +117,7 @@ catkin_package(
 # include_directories(include)
 include_directories(
    ~/rospkg/ros_opentld/tld_msgs/msg_gen/cpp/include/tld_msgs/
+   ~/catkin/src/color_detect/src/
   ${catkin_INCLUDE_DIRS}
 )
 
@@ -127,7 +129,7 @@ include_directories(
 ## Declare a cpp executable
 add_executable(serial_control src/serial.cpp)
 
-target_link_libraries(serial_control serial ${catkin_LIBRARIES})
+target_link_libraries(serial_control serial ${catkin_LIBRARIES} ${OpenCV_LIBS})
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(serial_control_node serial_control_generate_messages_cpp)
