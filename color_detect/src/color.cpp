@@ -107,22 +107,22 @@ void serialInit() {
 }
 
 
-void serialSend(int16_t yaw, int16_t pitch) {
+void serialSend(int16_t yaw, int16_t pixel) {
     //cout << yaw << ",";
     //cout << std::hex << yaw <<endl;
     //cout << pitch <<",";
     //cout << std::hex << pitch << endl;
     uint16_t yawStart = yaw >> 8;
     uint16_t yawEnd = yaw & 0xFF;
-    uint16_t pitchStart = pitch >> 8;
-    uint16_t pitchEnd = pitch & 0xFF;
+    uint16_t pixelStart = pixel >> 8;
+    uint16_t pixelEnd = pixel & 0xFF;
 
     serial_port << std::hex << 0xAA
         << std::hex << 0x55
         << std::hex <<yawEnd
         << std::hex <<yawStart
-        << std::hex <<pitchEnd
-        << std::hex <<pitchStart
+        << std::hex <<pixelEnd
+        << std::hex <<pixelStart
         << std::hex <<0xBB;
 
 //    cout << std::hex << 0xAA
@@ -364,7 +364,7 @@ void imageCallback(const sensor_msgs::ImageConstPtr& img) {
             {
                 nHangle = (short int)(vRltObs[0].fHAngle * 100 + vRltObs[0].fVx * nDeltaT / 1000);
 
-                serialSend((int16_t)nHangle,(int16_t)800);
+                serialSend((int16_t)nHangle,(int16_t)vRltObs[0].CnPt.x);
             }
             else
             {
