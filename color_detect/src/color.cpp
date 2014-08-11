@@ -53,7 +53,10 @@ void serialInit() {
     }
 
     // Set the baud rate of the serial port.
-    serial_port.SetBaudRate( SerialStreamBuf::BAUD_19200) ;
+    serial_port.SetBaudRate( SerialStreamBuf::BAUD_57600) ; //TODO
+    //int rate = serial_port.BaudRate();
+    //cout << SerialStreamBuf::BAUD_115200<<endl;
+    //cout << rate <<endl;
     if ( ! serial_port.good() )
     {
         std::cerr << "Error: Could not set the baud rate." <<
