@@ -33,22 +33,22 @@
 namespace enc = sensor_msgs::image_encodings;
 
 BaseFrame::BaseFrame()
-{   
+{
 	setupUi(this);
 
-	QObject::connect(this,SIGNAL(sig_image_received(const QImage &)),base_frame_graphics_view,SLOT(image_received(const QImage &)));    
+	QObject::connect(this,SIGNAL(sig_image_received(const QImage &)),base_frame_graphics_view,SLOT(image_received(const QImage &)));
 	QObject::connect(this,SIGNAL(sig_tracked_object_changed(const QRectF &)),base_frame_graphics_view,SLOT(tracked_objet_changed(const QRectF &)));
-	QObject::connect(this,SIGNAL(sig_fps_tracker_changed(int)),lcd_fps_tracker,SLOT(display(int)));  
-	QObject::connect(this,SIGNAL(sig_confidence_changed(int)),confidence_bar,SLOT(setValue(int)));  
+	QObject::connect(this,SIGNAL(sig_fps_tracker_changed(int)),lcd_fps_tracker,SLOT(display(int)));
+	QObject::connect(this,SIGNAL(sig_confidence_changed(int)),confidence_bar,SLOT(setValue(int)));
 	QObject::connect(background_reset_button,SIGNAL(clicked()),this,SLOT(clear_background()));
-	QObject::connect(learning_button,SIGNAL(clicked()),this,SLOT(toggle_learning()));      
+	QObject::connect(learning_button,SIGNAL(clicked()),this,SLOT(toggle_learning()));
 	QObject::connect(alternating_button,SIGNAL(clicked()),this,SLOT(alternating_mode()));
-	QObject::connect(stop_tracking_button,SIGNAL(clicked()),this,SLOT(clear_and_stop_tracking()));    
+	QObject::connect(stop_tracking_button,SIGNAL(clicked()),this,SLOT(clear_and_stop_tracking()));
 	QObject::connect(importing_button,SIGNAL(clicked()),this,SLOT(import_model()));
 	QObject::connect(exporting_button,SIGNAL(clicked()),this,SLOT(export_model()));
 	QObject::connect(reset_button,SIGNAL(clicked()),this,SLOT(reset()));
 
-	sub1 = n.subscribe("image", 1000, &BaseFrame::image_receivedCB, this);
+	sub1 = n.subscribe("/gnd_cam/image0", 1000, &BaseFrame::image_receivedCB, this);
 	sub2 = n.subscribe("tracked_object", 1000, &BaseFrame::tracked_objectCB, this);
 	sub3 = n.subscribe("fps_tracker", 1000, &BaseFrame::fps_trackerCB, this);
 	pub1 = n.advertise<tld_msgs::Target>("tld_gui_bb", 1000, true);
@@ -57,14 +57,14 @@ BaseFrame::BaseFrame()
 	first_image = true;
 }
 
-BaseFrame::~BaseFrame() 
+BaseFrame::~BaseFrame()
 {
 
 }
 
 void BaseFrame::keyPressEvent(QKeyEvent * event)
 {
-	switch (event->key()) 
+	switch (event->key())
 	{
 		case Qt::Key_Return:
 		case Qt::Key_Enter:
@@ -78,7 +78,7 @@ void BaseFrame::keyPressEvent(QKeyEvent * event)
 				msg.bb.width = (int)base_frame_graphics_view->get_bb()->rect().width();
 				msg.bb.height = (int)base_frame_graphics_view->get_bb()->rect().height();
 				msg.bb.confidence = 1.0;
-				cv_ptr->toImageMsg(msg.img);			
+				cv_ptr->toImageMsg(msg.img);
 				pub1.publish(msg);
 			}
 			break;
@@ -196,7 +196,7 @@ void BaseFrame::alternating_mode()
 {
 	std_msgs::Char cmd;
 	cmd.data = 'a';
-	pub2.publish(cmd);            
+	pub2.publish(cmd);
 	qDebug() << "Alternating mode";
 }
 
