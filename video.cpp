@@ -49,10 +49,10 @@ int Thre;
 RNG rng;
 int nTolHeight, nTolWidth;
 int nQueueCount;
-static int c_xoff[9] = { -1, 0, 1, -1, 1, -1, 0, 1, 0 };//xµÄÁÚ¾Óµã
-static int c_yoff[9] = { -1, 0, 1, -1, 1, -1, 0, 1, 0 };//yµÄÁÚ¾Óµã
-float samples[1024][1024][defaultNbSamples + 1];//±£´æÃ¿¸öÏñËØµãµÄÑù±¾Öµ
-queue <SObstacle> qObs;     //´æ´¢¹ýÈ¥NÖ¡µÄ¸ú×Ù½á¹û
+static int c_xoff[9] = { -1, 0, 1, -1, 1, -1, 0, 1, 0 };
+static int c_yoff[9] = { -1, 0, 1, -1, 1, -1, 0, 1, 0 };
+float samples[1024][1024][defaultNbSamples + 1];
+queue <SObstacle> qObs;
 vector<SObstacle> vNewObs, vOldObs;
 vector<int> vNewCount, vOldCount;
 
@@ -136,31 +136,44 @@ void serialInit() {
 }
 
 
-void serialSend(int16_t yaw, int16_t pixel) {
+void serialSend(int16_t yaw, int16_t pitch, int16_t pixelX, int16_t pixelY) {
     //cout << yaw << ",";
     //cout << std::hex << yaw <<endl;
     //cout << pitch <<",";
     //cout << std::hex << pitch << endl;
     uint16_t yawStart = yaw >> 8;
     uint16_t yawEnd = yaw & 0xFF;
-    uint16_t pixelStart = pixel >> 8;
-    uint16_t pixelEnd = pixel & 0xFF;
+    uint16_t pitchEnd = pitch >> 8;
+    uint16_t pitchStart = pitch &0xFF;
+    uint16_t pixelxStart = pixelX >> 8;
+    uint16_t pixelxEnd = pixelX & 0xFF;
+    uint16_t pixelyStart = pixelY >> 8;
+    uint16_t pixelyEnd = pixelY & 0xFF;
 
     serial_port << std::hex << 0xAA
         << std::hex << 0x55
         << std::hex <<yawEnd
         << std::hex <<yawStart
-        << std::hex <<pixelEnd
-        << std::hex <<pixelStart
+        << std::hex <<pitchEnd
+        << std::hex <<pitchStart
+        << std::hex << pixelxEnd
+        << std::hex << pixelxStart
+        << std::hex <<pixelyEnd
+        << std::hex <<pixelyStart
         << std::hex <<0xBB;
 
-//    cout << std::hex << 0xAA
-//        << std::hex << 0x55
-//        << std::hex << yawEnd
-//        << std::hex << yawStart
-//        << std::hex << pitchEnd
-//        << std::hex << pitchStart
-//        << std::hex << 0xBB << endl;
+    cout << std::hex << 0xAA
+        << std::hex << 0x55
+        << std::hex <<yawEnd
+        << std::hex <<yawStart
+        << std::hex <<pitchEnd
+        << std::hex <<pitchStart
+        << std::hex << pixelxEnd
+        << std::hex << pixelxStart
+        << std::hex <<pixelyEnd
+        << std::hex <<pixelyStart
+        << std::hex <<0xBB << endl;;
+
 
 
 }
@@ -468,11 +481,11 @@ int main(){
             if (vRltObs.size() > 0)
             {
                 nHangle = (short int)(vRltObs[0].fHAngle * 100 + vRltObs[0].fVx * nDeltaT / 1000);
-                serialSend((int16_t)nHangle,(int16_t)vRltObs[0].CnPt.x);
+                serialSend((int16_t)nHangle,(uint16_t)800,(int16_t)vRltObs[0].CnPt.x,(int16_t)vRltObs[0].CnPt.y);
             }
             else
             {
-                serialSend((int16_t)20000,(int16_t)20000);
+                serialSend((int16_t)20000,(int16_t)20000,(int16_t)20000,(int16_t)20000);
             }
             for (unsigned int nI = 0; nI < vRltObs.size(); nI++)
             {
