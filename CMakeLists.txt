@@ -132,7 +132,7 @@ add_executable(color_detect video.cpp)
    ${SERIAL_LIBRARIES}
  )
 
-CMAKE_BUILD_TYPE=Debug
+set (CMAKE_BUILD_TYPE Release)
 
 #############
 ## Install ##
