@@ -2,11 +2,7 @@
 #include <opencv2/legacy/legacy.hpp>
 #include <stack>
 #include <queue>
-#include <ros/ros.h>
 #include <opencv2/opencv.hpp>//TODO
-#include <cv_bridge/cv_bridge.h>
-#include <image_transport/image_transport.h>
-#include <sensor_msgs/image_encodings.h>
 #include <opencv2/imgproc/imgproc_c.h>
 #include <SerialStream.h>
 using namespace std;

@@ -82,7 +82,7 @@ void serialInit() {
     }
 
     // Set the baud rate of the serial port.
-    serial_port.SetBaudRate( SerialStreamBuf::BAUD_57600) ; //TODO
+    serial_port.SetBaudRate( SerialStreamBuf::BAUD_115200) ; //TODO
     //int rate = serial_port.BaudRate();
     //cout << SerialStreamBuf::BAUD_115200<<endl;
     //cout << rate <<endl;
@@ -136,15 +136,15 @@ void serialInit() {
 }
 
 
-void serialSend(int16_t yaw, int16_t pitch, int16_t pixelX, int16_t pixelY) {
+void serialSend(int16_t yaw, int16_t pitch,int16_t pixelX, int16_t pixelY) {
     //cout << yaw << ",";
     //cout << std::hex << yaw <<endl;
     //cout << pitch <<",";
     //cout << std::hex << pitch << endl;
-    uint16_t yawStart = yaw >> 8;
-    uint16_t yawEnd = yaw & 0xFF;
+    uint16_t yawEnd = yaw >> 8;
+    uint16_t yawStart = yaw & 0xFF;
     uint16_t pitchEnd = pitch >> 8;
-    uint16_t pitchStart = pitch &0xFF;
+    uint16_t pitchStart = pitch & 0xFF;
     uint16_t pixelxStart = pixelX >> 8;
     uint16_t pixelxEnd = pixelX & 0xFF;
     uint16_t pixelyStart = pixelY >> 8;
@@ -356,8 +356,6 @@ void Tracking(vector<SObstacle> vPreObs, vector<SObstacle> & vCurObs, int nDelta
 
 int main(){
 
-    //CvCapture* pCapture0 = cvCreateFileCapture("F:\\DJI\\testfile\\avi\\7.10-2.avi");
-    //CvCapture* pCapture0 = cvCreateFileCapture("F:\\DJI\\testfile\\avi\\07.24-1.avi");
     CvCapture* pCapture0 = cvCreateCameraCapture(0);
     IplImage* pFrame0 = NULL;
     IplImage * pLabelImg = NULL;
@@ -489,7 +487,7 @@ int main(){
             }
             for (unsigned int nI = 0; nI < vRltObs.size(); nI++)
             {
-                cout << vRltObs[nI].fVx << ", " << vRltObs[nI].fVy << endl;
+                //cout << vRltObs[nI].fVx << ", " << vRltObs[nI].fVy << endl;
                 cvRectangle(RgbImage, vRltObs[nI].FrPt, vRltObs[nI].NrPt, cvScalar(0, 0, 255));
             }
 
